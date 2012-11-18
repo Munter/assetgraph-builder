@@ -57,17 +57,17 @@ vows.describe('buildProduction').addBatch({
         },
         'the English Html asset should have the expected contents': function (assetGraph) {
             assert.equal(assetGraph.findAssets({url: /\/index\.en\.html$/})[0].text,
-                         '<!DOCTYPE html>\n<html lang="en" manifest="index.appcache"><head><title>The English title</title><style type="text/css">body{color:teal;color:maroon}</style><style type="text/css">body{color:tan}</style><style type="text/css">body div{width:100px}</style><meta http-equiv="Content-Version" content="The version number" /></head><body><script src="http://cdn.example.com/foo/5503882c3f.js" data-main="http://cdn.example.com/foo/56082cbc37" async="async" defer="defer"></script><script>alert("script3")</script></body></html>');
+                         '<!DOCTYPE html>\n<html lang="en" manifest="index.appcache"><head><title>The English title</title><style type="text/css">body{color:teal;color:maroon}</style><style type="text/css">body{color:tan}</style><style type="text/css">body div{width:100px}</style><meta http-equiv="Content-Version" content="The version number" /></head><body><script src="http://cdn.example.com/foo/5503882c3f.js" data-main="http://cdn.example.com/foo/2ede0adff9" async="async" defer="defer"></script><script>alert("script3")</script></body></html>');
         },
         'the Danish Html asset should have the expected contents': function (assetGraph) {
             assert.equal(assetGraph.findAssets({url: /\/index\.da\.html$/})[0].text,
-                         '<!DOCTYPE html>\n<html lang="da" manifest="index.appcache"><head><title>Den danske titel</title><style type="text/css">body{color:teal;color:maroon}</style><style type="text/css">body{color:tan}</style><style type="text/css">body div{width:100px}</style><meta http-equiv="Content-Version" content="The version number" /></head><body><script src="http://cdn.example.com/foo/5503882c3f.js" data-main="http://cdn.example.com/foo/271b906b9b" async="async" defer="defer"></script><script>alert("script3")</script></body></html>');
+                         '<!DOCTYPE html>\n<html lang="da" manifest="index.appcache"><head><title>Den danske titel</title><style type="text/css">body{color:teal;color:maroon}</style><style type="text/css">body{color:tan}</style><style type="text/css">body div{width:100px}</style><meta http-equiv="Content-Version" content="The version number" /></head><body><script src="http://cdn.example.com/foo/5503882c3f.js" data-main="http://cdn.example.com/foo/4efa22eec7" async="async" defer="defer"></script><script>alert("script3")</script></body></html>');
         },
         'the English Html data-main js should have the expected contents': function (assetGraph) {
-            assert.equal(assetGraph.findRelations({type: 'HtmlRequireJsMain', from: {url: /\/index\.en\.html$/}})[0].to.text, 'alert("something else"),alert("shimmed"),define("amdDependency",function(){console.warn("here I AM(D)")}),define("view/template.ko",ko.externalTemplateEngine.templates.template=\'<a href="/index.html">The English link text</a><img src="http://cdn.example.com/foo/3fb51b1ae1.gif" />\'),require.config({shim:{shimmed:["somethingElse"]}}),require(["amdDependency","view/template.ko"],function(e){alert("Hello!")})');
+            assert.equal(assetGraph.findRelations({type: 'HtmlRequireJsMain', from: {url: /\/index\.en\.html$/}})[0].to.text, 'alert("something else"),alert("shimmed"),define("amdDependency",function(){console.warn("here I AM(D)")}),define("view/template.en.ko",ko.externalTemplateEngine.templates.template=\'<a href="/index.html">The English link text</a><img src="http://cdn.example.com/foo/3fb51b1ae1.gif" />\'),require.config({shim:{shimmed:["somethingElse"]}}),require(["amdDependency","view/template.en.ko"],function(e){alert("Hello!")})');
         },
         'the Danish Html data-main js should have the expected contents': function (assetGraph) {
-            assert.equal(assetGraph.findRelations({type: 'HtmlRequireJsMain', from: {url: /\/index\.da\.html$/}})[0].to.text, 'alert("something else"),alert("shimmed"),define("amdDependency",function(){console.warn("here I AM(D)")}),define("view/template.ko",ko.externalTemplateEngine.templates.template=\'<a href="/index.html">Den danske linktekst</a><img src="http://cdn.example.com/foo/3fb51b1ae1.gif" />\'),require.config({shim:{shimmed:["somethingElse"]}}),require(["amdDependency","view/template.ko"],function(e){alert("Hej!")})');
+            assert.equal(assetGraph.findRelations({type: 'HtmlRequireJsMain', from: {url: /\/index\.da\.html$/}})[0].to.text, 'alert("something else"),alert("shimmed"),define("amdDependency",function(){console.warn("here I AM(D)")}),define("view/template.da.ko",ko.externalTemplateEngine.templates.template=\'<a href="/index.html">Den danske linktekst</a><img src="http://cdn.example.com/foo/3fb51b1ae1.gif" />\'),require.config({shim:{shimmed:["somethingElse"]}}),require(["amdDependency","view/template.da.ko"],function(e){alert("Hej!")})');
         },
         'someTextFile.txt should be found at /static/c7429a1035.txt (not on the CDN)': function (assetGraph) {
             assert.equal(assetGraph.findAssets({url: /\/static\/c7429a1035\.txt$/}).length, 1);
@@ -92,8 +92,8 @@ vows.describe('buildProduction').addBatch({
                     'http://cdn.example.com/foo/5503882c3f.js',
                     'http://cdn.example.com/foo/3fb51b1ae1.gif',
                     htmlAsset.fileName === 'index.da.html' ?
-                        'http://cdn.example.com/foo/271b906b9b.js' :
-                        'http://cdn.example.com/foo/56082cbc37.js',
+                        'http://cdn.example.com/foo/4efa22eec7.js' :
+                        'http://cdn.example.com/foo/2ede0adff9.js',
                     'NETWORK:',
                     '*',
                     ''
@@ -125,6 +125,26 @@ vows.describe('buildProduction').addBatch({
         },
         'there should be no relations': function (assetGraph) {
             assert.equal(assetGraph.findRelations({}, true).length, 0);
+        }
+    },
+    'After loading a test case with a require.js module whose name depends on LOCALEID, then running the buildProduction transform': {
+        topic: function () {
+            new AssetGraph({root: __dirname + '/buildProduction/localeDependentRequire/'})
+                .registerRequireJsConfig()
+                .loadAssets('index.html')
+                .buildProduction({
+                    localeIds: ['da', 'en']
+                })
+                .run(this.callback);
+        },
+        'the graph should contain 2 Html assets': function (assetGraph) {
+            assert.equal(assetGraph.findAssets({type: 'Html'}).length, 2);
+        },
+        'the Danish JavaScript should include the contents of foo_da.js': function (assetGraph) {
+            assert.matches(assetGraph.findRelations({type: 'HtmlRequireJsMain', from: {url: /\/index\.da\.html$/}})[0].to.text, /The Danish one/);
+        },
+        'the English JavaScript should include the contents of foo_en.js': function (assetGraph) {
+            assert.matches(assetGraph.findRelations({type: 'HtmlRequireJsMain', from: {url: /\/index\.en\.html$/}})[0].to.text, /The English one/);
         }
     }
 })['export'](module);
