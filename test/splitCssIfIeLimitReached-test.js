@@ -1,7 +1,5 @@
 var vows = require('vows'),
     assert = require('assert'),
-    _ = require('underscore'),
-    seq = require('seq'),
     AssetGraph = require('../lib/AssetGraph');
 
 vows.describe('transforms.splitCssIfIeLimitIsReached').addBatch({

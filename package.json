@@ -33,6 +33,7 @@
         "histogram": "=0.1.4"
     },
     "devDependencies": {
+        "cssom-papandreou": "=0.2.4-patch1",
         "gm": "=1.6.1",
         "vows": "=0.7.0"
     },
