@@ -40,6 +40,11 @@ vows.describe('transforms.splitCssIfIeLimitIsReached').addBatch({
             'the graph should contain 2 Css asset': function (assetGraph) {
                 assert.equal(assetGraph.findAssets({type: 'Css'}).length, 2);
             },
+            'each Css asset should be smaller than the original': function (assetGraph) {
+                assetGraph.findAssets({type: 'Css'}).forEach(function (cssAsset) {
+                    assert(cssAsset.text.length < cssText);
+                });
+            },
             'the concatenated css text content should be unchanged from before': function (assetGraph) {
                 assert.equal(assetGraph.findAssets({type: 'Css'}).map(function (cssAsset) {
                         return cssAsset.text;
