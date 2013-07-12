@@ -1,6 +1,7 @@
 var vows = require('vows'),
     assert = require('assert'),
-    AssetGraph = require('../lib/AssetGraph');
+    AssetGraph = require('../lib/AssetGraph'),
+    cssText = '';
 
 vows.describe('transforms.splitCssIfIeLimitIsReached').addBatch({
     'After loading a Css test case': {
@@ -11,7 +12,13 @@ vows.describe('transforms.splitCssIfIeLimitIsReached').addBatch({
                 .run(this.callback);
         },
         'the graph should contain 1 Css asset': function (assetGraph) {
-            assert.equal(assetGraph.findAssets({type: 'Css'}).length, 1);
+            var cssAssets = assetGraph.findAssets({type: 'Css'});
+
+            assert.equal(cssAssets.length, 1);
+
+            cssText = cssAssets.map(function (cssAsset) {
+                return cssAsset.text;
+            }).join();
         },
         'the Css asset should contain 4096 rules': function (assetGraph) {
             assert.equal(assetGraph.findAssets({ type: 'Css' })[0].parseTree.cssRules.length, 4096);
@@ -29,6 +36,14 @@ vows.describe('transforms.splitCssIfIeLimitIsReached').addBatch({
             },
             'the graph should have 1 emitted warning': function (assetGraph) {
                 assert.equal(assetGraph.__warnings.length, 1);
+            },
+            'the graph should contain 2 Css asset': function (assetGraph) {
+                assert.equal(assetGraph.findAssets({type: 'Css'}).length, 2);
+            },
+            'the concatenated css text content should be unchanged from before': function (assetGraph) {
+                assert.equal(assetGraph.findAssets({type: 'Css'}).map(function (cssAsset) {
+                        return cssAsset.text;
+                    }).join(), cssText);
             }
         }
     }
