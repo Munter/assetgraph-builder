@@ -44,13 +44,13 @@ vows.describe('transforms.splitCssIfIeLimitIsReached').addBatch({
             },
             'each Css asset should be smaller than the original': function (assetGraph) {
                 assetGraph.findAssets({type: 'Css'}).forEach(function (cssAsset) {
-                    assert(cssAsset.rawSrc.length < cssText);
+                    assert(cssAsset.text.length < cssText.length);
                 });
             },
             'the concatenated css text content should be unchanged from before': function (assetGraph) {
-                /*assert.equal(assetGraph.findAssets({type: 'Css'}).map(function (cssAsset) {
+                assert.equal(assetGraph.findAssets({type: 'Css'}).map(function (cssAsset) {
                         return cssAsset.text;
-                    }).join(), cssText);*/
+                    }).join(''), cssText);
             }
         }
     }
