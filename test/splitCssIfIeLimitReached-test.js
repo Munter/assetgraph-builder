@@ -9,6 +9,7 @@ vows.describe('transforms.splitCssIfIeLimitIsReached').addBatch({
             new AssetGraph({root: __dirname + '/splitCssIfIeLimitReached/'})
                 .loadAssets('index.html')
                 .populate()
+                .minifyAssets({ type: 'Css', isLoaded: true})
                 .run(this.callback);
         },
         'the graph should contain 1 Css asset': function (assetGraph) {
@@ -31,9 +32,7 @@ vows.describe('transforms.splitCssIfIeLimitIsReached').addBatch({
                     .on('warn', function (err) {
                         assetGraph.__warnings.push(err);
                     })
-                    //.drawGraph('./before.svg')
                     .splitCssIfIeLimitIsReached()
-                    //.drawGraph('./after.svg')
                     .run(this.callback);
             },
             'the graph should have 1 emitted warning': function (assetGraph) {
