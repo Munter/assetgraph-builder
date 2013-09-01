@@ -1,5 +1,24 @@
 #!/usr/bin/env node
 
+var defaults = {
+    optimizeimages: false,
+    debug: false,
+    gzip: false,
+    deferscripts: false,
+    asyncscripts: false,
+    stoponwarning: false,
+    nocompress: false, // merge with --debug?
+    less: true,
+    cdnflash: true,
+    cdnhtml: false,
+    sharedbundles: false,
+    manifest: false,
+    negotiatemanifest: false,
+    defaultlocale: 'en',
+    localecookiename: 'locale',
+    inlinesize: 8192
+};
+
 var optimist = require('optimist'),
     colors = require('colors'),
     commandLineOptions = optimist
@@ -28,12 +47,12 @@ var optimist = require('optimist'),
         .options('optimizeimages', {
             describe: 'Perform automatic lossless optimization of all images using pngcrush, pngquant, optipng, and jpegtran',
             type: 'boolean',
-            default: false
+            default: defaults.optimizeimages
         })
         .options('debug', {
             describe: 'Keep statement level console.*() calls and debugger statements in JavaScript assets',
             type: 'boolean',
-            default: false
+            default: defaults.debug
         })
         .options('version', {
             describe: 'Adds or updates <html data-version="..."> to the specified value. Use {0} to refer to the current value, eg. --version {0}/production or --version `git describe --long --tags --always --dirty 2>/dev/null || echo unknown`',
@@ -41,17 +60,18 @@ var optimist = require('optimist'),
         })
         .options('gzip', {
             describe: 'Include a gzipped copy of text-based assets > 860 bytes for which it yields a saving',
-            default: false
+            type: 'boolean',
+            default: defaults.gzip
         })
         .options('deferscripts', {
             describe: 'Sets the "defer" attribute on all script tags',
             type: 'boolean',
-            default: false
+            default: defaults.deferscripts
         })
         .options('asyncscripts', {
             describe: 'Sets the "async" attribute on all script tags',
             type: 'boolean',
-            default: false
+            default: defaults.asyncscripts
         })
         .options('reservednames', {
             describe: 'Exclude certain variable names from mangling (equivalent to uglifyjs --reserved-names ...)'
@@ -59,22 +79,22 @@ var optimist = require('optimist'),
         .options('stoponwarning', {
             describe: 'Whether to stop with a non-zero exit code when a warning is encountered',
             type: 'boolean',
-            default: false
+            default: defaults.stoponwarning
         })
         .options('nocompress', {
             describe: 'Prettifies HTML, CSS and Javascript for easier debugging',
             type: 'boolean',
-            default: false
+            default: defaults.nocompress
         })
         .options('noless', {
             describe: 'Keep .less files as they are instead of automatically compiling them to CSS',
             type: 'boolean',
-            default: false
+            default: !defaults.less
         })
         .options('nocdnflash', {
             describe: 'Avoid putting flash files on the cdnroot. Use this if you have problems setting up CORS',
             type: 'boolean',
-            default: false
+            default: !defaults.cdnflash
         })
         .options('define', {
             alias: 'd',
@@ -83,27 +103,27 @@ var optimist = require('optimist'),
         })
         .options('inlinesize', {
             describe: 'Inline CSS backgrounds below this threshold as data-uris',
-            default: 8192
+            default: defaults.inlinesize
         })
         .options('cdnhtml', {
             describe: 'Put non-initial HTML files on the cdnroot as well. Some CDN packages (such as Akamai\'s cheapest one) don\'t allow this',
             type: 'boolean',
-            default: false
+            default: defaults.cdnhtml
         })
         .options('sharedbundles', {
             describe: 'Try to create shared bundles including commin files across multiple pages',
             type: 'boolean',
-            default: false
+            default: defaults.sharedbundles
         })
         .options('manifest', {
             describe: 'Generates an appcache manifest file with all static assets included',
             type: 'boolean',
-            default: false
+            default: defaults.manifest
         })
         .options('negotiatemanifest', {
             describe: 'Removes the locale id from the <html manifest="..."> references so all manifests are assumed to be accessible from the same url. Useful if you want the browser to pick up the right cache manifest and HTML after a locale change (your static file server needs to support content negotiation). Only makes sense when both  --manifest and --locale have been specified',
             type: 'boolean',
-            default: false
+            default: defaults.negotiatemanifest
         })
         .options('locales', {
             describe: 'Comma-separated list of locales to build seperate versions for',
@@ -113,12 +133,12 @@ var optimist = require('optimist'),
         .options('defaultlocale', {
             describe: 'The locale of the default value in TR statements and tags with a data-i18n attribute',
             type: 'string',
-            default: 'en'
+            default: defaults.defaultlocale
         })
         .options('localecookiename', {
             describe: 'The name of your locale cookie (exposed as LOCALECOOKIENAME)',
             type: 'string',
-            default: 'en'
+            default: defaults.localecookiename
         })
         .options('repl', {
             describe: 'Start the REPL after a particular transform (or "error")',
